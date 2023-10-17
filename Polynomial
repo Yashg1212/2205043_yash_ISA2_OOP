@@ -1,0 +1,120 @@
+import java.util.Scanner;
+
+class Polynomial {
+    private int[] coefficients;
+
+    public Polynomial(int[] coefficients) {
+        this.coefficients = coefficients;
+    }
+
+    public int evaluate(int x) {
+        int result = 0;
+        int powerOfX = 1;
+
+        for (int coefficient : coefficients) {
+            result += coefficient * powerOfX;
+            powerOfX *= x;
+        }
+
+        return result;
+    }
+
+    public Polynomial add(Polynomial other) {
+        int maxLength = Math.max(coefficients.length, other.coefficients.length);
+        int[] resultCoefficients = new int[maxLength];
+
+        for (int i = 0; i < maxLength; i++) {
+            int coefficient1 = (i < coefficients.length) ? coefficients[i] : 0;
+            int coefficient2 = (i < other.coefficients.length) ? other.coefficients[i] : 0;
+            resultCoefficients[i] = coefficient1 + coefficient2;
+        }
+
+        return new Polynomial(resultCoefficients);
+    }
+
+    public Polynomial multiply(Polynomial other) {
+        int resultDegree = coefficients.length + other.coefficients.length - 1;
+        int[] resultCoefficients = new int[resultDegree];
+
+        for (int i = 0; i < coefficients.length; i++) {
+            for (int j = 0; j < other.coefficients.length; j++) {
+                resultCoefficients[i + j] += coefficients[i] * other.coefficients[j];
+            }
+        }
+
+        return new Polynomial(resultCoefficients);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = coefficients.length - 1; i >= 0; i--) {
+            if (coefficients[i] != 0) {
+                if (coefficients[i] > 0 && sb.length() > 0) {
+                    sb.append("+");
+                }
+                if (coefficients[i] != 1 || i == 0) {
+                    sb.append(coefficients[i]);
+                }
+                if (i > 0) {
+                    sb.append("x");
+                    if (i > 1) {
+                        sb.append("^").append(i);
+                    }
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+}
+
+public class PolynomialProgram {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Polynomial Input Program");
+        System.out.print("Enter the degree of the first polynomial: ");
+        int degree1 = scanner.nextInt();
+        int[] coefficients1 = new int[degree1 + 1];
+
+        for (int i = 0; i <= degree1; i++) {
+            System.out.print("Enter the coefficient for x^" + i + ": ");
+            coefficients1[i] = scanner.nextInt();
+        }
+
+        Polynomial polynomial1 = new Polynomial(coefficients1);
+        System.out.println("Polynomial 1: " + polynomial1);
+
+        System.out.print("Enter the degree of the second polynomial: ");
+        int degree2 = scanner.nextInt();
+        int[] coefficients2 = new int[degree2 + 1];
+
+        for (int i = 0; i <= degree2; i++) {
+            System.out.print("Enter the coefficient for x^" + i + ": ");
+            coefficients2[i] = scanner.nextInt();
+        }
+
+        Polynomial polynomial2 = new Polynomial(coefficients2);
+        System.out.println("Polynomial 2: " + polynomial2);
+
+        int x = 0; // Initialize x to 0
+        System.out.print("Enter the value of x for evaluation: ");
+        x = scanner.nextInt();
+
+        int result1 = polynomial1.evaluate(x);
+        int result2 = polynomial2.evaluate(x);
+
+        System.out.println("Result for x = " + x + " (Polynomial 1): " + result1);
+        System.out.println("Result for x = " + x + " (Polynomial 2): " + result2);
+
+        Polynomial sum = polynomial1.add(polynomial2);
+        Polynomial product = polynomial1.multiply(polynomial2);
+
+        System.out.println("Sum: " + sum);
+        System.out.println("Product: " + product);
+
+        scanner.close();
+    }
+}
